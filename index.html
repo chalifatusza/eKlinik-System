@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="assets/images/logo e-klinik.png">
+    <meta name="description"
+        content="Sistem informasi klinik digital Universitas Negeri Surabaya. Pendaftaran online, antrian real-time, dan rekam medis mahasiswa.">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
+</head>
+
+<body>
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="container d-flex justify-content-between align-items-center">
+            <div class="contact-info">
+                <span><i class="fas fa-phone-alt"></i> (031) 1234567</span>
+                <span><i class="fas fa-envelope"></i> klinik@unesa.ac.id</span>
+            </div>
+            <div class="d-flex align-items-center gap-3">
+                <span class="emergency-badge"><i class="fas fa-ambulance"></i> 24/7 Emergency Service</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navbar -->
+    <header class="fixed-header" id="mainHeader">
+        <nav class="main-navbar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <a class="navbar-brand" href="#">
+                    <div class="logo-wrapper">
+                        <img src="assets/images/logo e-klinik.png" alt="E-Klinik" class="logo-img">
+                        <div class="logo-text"><span class="logo-unesa">UNESA</span><span
+                                class="logo-eklinik">E-Klinik</span></div>
+                    </div>
+                </a>
+                <div class="d-none d-lg-flex">
+                    <ul class="navbar-nav d-flex flex-row" style="list-style:none;margin:0;padding:0;">
+                        <li><a class="nav-link active" href="#home">Home</a></li>
+                        <li><a class="nav-link" href="#about">About</a></li>
+                        <li><a class="nav-link" href="#department">Department</a></li>
+                        <li><a class="nav-link" href="#doctors">Doctors</a></li>
+                        <li><a class="nav-link" href="#gallery">Gallery</a></li>
+                        <li><a class="nav-link" href="#pricing">Pricing</a></li>
+                        <li><a class="nav-link" href="#blog">Blog</a></li>
+                        <li><a class="nav-link" href="#contact">Contact</a></li>
+                    </ul>
+                </div>
+                <div class="navbar-buttons d-none d-lg-flex">
+                    <a href="#" onclick="return goProtected('appointment')" class="btn-appointment-nav"><i
+                            class="fas fa-calendar-check"></i> Appointment</a>
+                    <a href="pages/login.html" class="btn-login-nav" id="loginBtn"><i class="fas fa-sign-in-alt"></i>
+                        Login</a>
+                </div>
+                <button class="menu-toggle d-lg-none" id="mobileMenuBtn"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div class="mobile-nav-overlay" id="mobileNavOverlay"></div>
+    <div class="mobile-nav-drawer" id="mobileNavDrawer">
+        <div class="mobile-nav-header">
+            <div class="logo-wrapper">
+                <img src="assets/images/logo e-klinik.png" alt="E-Klinik" class="logo-img"
+                    style="width:36px;height:36px;">
+                <div class="logo-text"><span class="logo-unesa">UNESA</span><span class="logo-eklinik">E-Klinik</span>
+                </div>
+            </div>
+            <button class="mobile-nav-close" id="mobileNavClose"><i class="fas fa-times"></i></button>
+        </div>
+        <ul class="mobile-nav-links">
+            <li><a href="#home"><i class="fas fa-home"></i> Home</a></li>
+            <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
+            <li><a href="#department"><i class="fas fa-hospital"></i> Department</a></li>
+            <li><a href="#doctors"><i class="fas fa-user-md"></i> Doctors</a></li>
+            <li><a href="#gallery"><i class="fas fa-images"></i> Gallery</a></li>
+            <li><a href="#pricing"><i class="fas fa-tags"></i> Pricing</a></li>
+            <li><a href="#blog"><i class="fas fa-newspaper"></i> Blog</a></li>
+            <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+        <div class="mobile-nav-buttons">
+            <a href="#" onclick="return goProtected('appointment')" class="btn-primary"><i
+                    class="fas fa-calendar-check"></i> Appointment</a>
+            <a href="pages/login.html" class="btn-secondary"><i class="fas fa-sign-in-alt"></i> Login</a>
+        </div>
+    </div>
+
+    <div class="header-spacer"></div>
+
+    <!-- HERO -->
+    <section class="hero-section" id="home">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6">
+                    <div class="hero-content">
+                        <div class="hero-badge"><i class="fas fa-shield-alt"></i> Layanan Kesehatan Terpercaya</div>
+                        <h1>Layanan <span>E-Klinik UNESA</span> Untuk Kesehatan Mahasiswa</h1>
+                        <p>Sistem Informasi Manajemen Kesehatan terintegrasi untuk mahasiswa Universitas Negeri
+                            Surabaya. Mudah, cepat, dan terpercaya dengan teknologi modern.</p>
+                        <div class="hero-buttons">
+                            <a href="#" onclick="return goProtected('appointment')" class="btn-primary"><i
+                                    class="fas fa-calendar-plus"></i> Daftar Antrian</a>
+                            <a href="#" onclick="return goProtected('appointment')" class="btn-secondary"
+                                style="background:var(--danger);color:#fff;border-color:var(--danger);"><i
+                                    class="fas fa-video"></i> Konsultasi Online</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="hero-image-wrapper">
+                        <div class="hero-blob"><img src="assets/images/rektorat.webp" alt="Kampus UNESA"></div>
+                        <div class="floating-card card-experience"><i class="fas fa-user-md"></i>
+                            <div><strong></strong><span>Dokter Spesialis</span></div>
+                        </div>
+                        <div class="floating-card card-patients"><i class="fas fa-smile"></i>
+                            <div><strong></strong><span>Pasien Puas</span></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="hero-shape"></div>
+    </section>
+
+    <!-- FEATURES -->
+    <section class="feature-cards-section" id="features">
+        <div class="container">
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-calendar-alt"></i></div>
+                        <h3>Booking Online</h3>
+                        <p>Daftar antrian online dengan mudah, dapatkan nomor antrian digital tanpa perlu datang lebih
+                            awal.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-file-medical-alt"></i></div>
+                        <h3>Rekam Medis Digital</h3>
+                        <p>Akses riwayat kesehatan Anda kapan saja, terintegrasi dengan sistem rekam medis elektronik.
+                        </p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="feature-card">
+                        <div class="feature-icon"><i class="fas fa-video"></i></div>
+                        <h3>Konsultasi Online</h3>
+                        <p>Konsultasi dengan dokter spesialis melalui video call atau chat, tanpa harus ke klinik.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS SECTION -->
+    <section class="stats-section py-5" style="background: var(--white); border-bottom: 1px solid var(--gray-200);">
+        <div class="container">
+            <div class="row g-4 text-center">
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <i class="fas fa-user-md mb-3" style="font-size: 40px; color: var(--primary-color);"></i>
+                        <h3 id="mainStatDoctors" style="font-weight: 800; font-size: 32px; color: var(--text-dark);">0
+                        </h3>
+                        <p style="color: var(--text-muted); font-weight: 500;">Dokter Profesional</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <i class="fas fa-users mb-3" style="font-size: 40px; color: var(--secondary-color);"></i>
+                        <h3 id="mainStatPatients" style="font-weight: 800; font-size: 32px; color: var(--text-dark);">0
+                        </h3>
+                        <p style="color: var(--text-muted); font-weight: 500;">Pasien Terdaftar</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-check mb-3" style="font-size: 40px; color: var(--accent-color);"></i>
+                        <h3 id="mainStatQueue" style="font-weight: 800; font-size: 32px; color: var(--text-dark);">0
+                        </h3>
+                        <p style="color: var(--text-muted); font-weight: 500;">Antrian Hari Ini</p>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="stat-item">
+                        <i class="fas fa-star mb-3" style="font-size: 40px; color: var(--warning);"></i>
+                        <h3 style="font-weight: 800; font-size: 32px; color: var(--text-dark);">4.9</h3>
+                        <p style="color: var(--text-muted); font-weight: 500;">Rating Kepuasan</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ABOUT -->
+    <section class="about-section" id="about">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">WHO WE ARE</span>
+                <h2>Tentang E-Klinik UNESA</h2>
+                <p>Pelayanan kesehatan terbaik untuk mahasiswa Universitas Negeri Surabaya</p>
+            </div>
+            <div class="row align-items-center g-5">
+                <div class="col-lg-6">
+                    <div class="about-content">
+                        <h3>Klinik Kesehatan Modern dengan Teknologi Terkini</h3>
+                        <p>E-Klinik UNESA adalah sistem informasi manajemen kesehatan yang dirancang khusus untuk
+                            memenuhi kebutuhan kesehatan mahasiswa Universitas Negeri Surabaya. Dengan teknologi modern
+                            dan tenaga medis profesional, kami siap memberikan pelayanan terbaik.</p>
+                        <p>Kami berkomitmen untuk menyediakan layanan kesehatan yang mudah diakses, cepat, dan
+                            terpercaya. Didukung oleh sistem digital terintegrasi, mahasiswa dapat mengakses layanan
+                            kesehatan kapan saja dan di mana saja.</p>
+                        <div class="about-signature">
+                            <img src="assets/images/doctor.jpg" alt="dr. Ahmad Fauzi"
+                                style="width:60px;height:60px;border-radius:50%;object-fit:cover;margin-right:12px;">
+                            <div><strong>dr. Ahmad Fauzi, Sp.PD</strong><span>Kepala Klinik UNESA</span></div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-6">
+                    <div class="timetable-card">
+                        <div class="timetable-header"><i class="fas fa-clock"></i>
+                            <h3>Jam Operasional</h3>
+                        </div>
+                        <div class="timetable-body">
+                            <div class="schedule-item"><span class="day">Senin - Jumat</span><span class="time">08:00 -
+                                    20:00</span></div>
+                            <div class="schedule-item"><span class="day">Sabtu</span><span class="time">08:00 -
+                                    15:00</span></div>
+                            <div class="schedule-item"><span class="day">Minggu</span><span class="time"
+                                    style="color:var(--danger);">Tutup</span></div>
+                            <div class="schedule-item emergency"><span class="day"><i
+                                        class="fas fa-exclamation-triangle"></i> Emergency</span><span class="time">24
+                                    Jam</span></div>
+                        </div>
+                        <div class="timetable-footer"><a href="tel:0311234567" class="btn-call"><i
+                                    class="fas fa-phone"></i> Call Emergency</a></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- DEPARTMENT -->
+    <section class="department-section" id="department">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">OUR DEPARTMENTS</span>
+                <h2>Layanan Klinik UNESA</h2>
+                <p>Berbagai layanan kesehatan yang tersedia di Klinik UNESA</p>
+            </div>
+            <div class="dept-tabs">
+                <button class="dept-tab active" data-dept="poliumum"><i class="fas fa-stethoscope"></i> Poli
+                    Umum</button>
+                <button class="dept-tab" data-dept="poligigi"><i class="fas fa-tooth"></i> Poli Gigi</button>
+                <button class="dept-tab" data-dept="konsultasi"><i class="fas fa-video"></i> Konsultasi Online</button>
+                <button class="dept-tab" data-dept="mental"><i class="fas fa-brain"></i> Kesehatan Mental</button>
+                <button class="dept-tab" data-dept="lab"><i class="fas fa-flask"></i> Laboratorium</button>
+                <button class="dept-tab" data-dept="apotek"><i class="fas fa-pills"></i> Apotek</button>
+            </div>
+            <div class="dept-content">
+                <div class="dept-panel active" id="dept-poliumum">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Poli Umum</h3>
+                            <p>Layanan kesehatan umum untuk berbagai keluhan kesehatan ringan hingga sedang. Dilayani
+                                oleh dokter umum berpengalaman yang siap memberikan diagnosis dan penanganan yang tepat.
+                            </p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Pemeriksaan kesehatan umum</li>
+                                <li><i class="fas fa-check-circle"></i> Konsultasi kesehatan</li>
+                                <li><i class="fas fa-check-circle"></i> Pemberian resep obat</li>
+                                <li><i class="fas fa-check-circle"></i> Rujukan ke spesialis</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/pum.jpeg" alt="Poli Umum" class="dept-img"></div>
+                    </div>
+                </div>
+                <div class="dept-panel" id="dept-poligigi">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Poli Gigi</h3>
+                            <p>Layanan kesehatan gigi dan mulut lengkap dengan peralatan modern. Ditangani oleh dokter
+                                gigi profesional untuk perawatan preventif dan kuratif.</p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Pemeriksaan gigi rutin</li>
+                                <li><i class="fas fa-check-circle"></i> Pembersihan karang gigi</li>
+                                <li><i class="fas fa-check-circle"></i> Penambalan gigi</li>
+                                <li><i class="fas fa-check-circle"></i> Pencabutan gigi</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/pgi.jpeg" alt="Poli Gigi" class="dept-img"></div>
+                    </div>
+                </div>
+                <div class="dept-panel" id="dept-konsultasi">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Konsultasi Online</h3>
+                            <p>Layanan konsultasi jarak jauh melalui video call atau chat dengan dokter. Praktis tanpa
+                                harus datang ke klinik.</p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Video call dengan dokter</li>
+                                <li><i class="fas fa-check-circle"></i> Chat konsultasi</li>
+                                <li><i class="fas fa-check-circle"></i> E-resep digital</li>
+                                <li><i class="fas fa-check-circle"></i> Follow-up online</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/konsul.jpeg" alt="Konsultasi Online"
+                                class="dept-img"></div>
+                    </div>
+                </div>
+                <div class="dept-panel" id="dept-mental">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Kesehatan Mental</h3>
+                            <p>Layanan konseling dan psikologi untuk menjaga kesehatan mental mahasiswa. Ditangani oleh
+                                psikolog klinis berpengalaman.</p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Konseling individu</li>
+                                <li><i class="fas fa-check-circle"></i> Asesmen psikologi</li>
+                                <li><i class="fas fa-check-circle"></i> Manajemen stres</li>
+                                <li><i class="fas fa-check-circle"></i> Support group</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/kesmental.jpg" alt="Kesehatan Mental"
+                                class="dept-img"></div>
+                    </div>
+                </div>
+                <div class="dept-panel" id="dept-lab">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Laboratorium</h3>
+                            <p>Fasilitas laboratorium lengkap untuk pemeriksaan darah, urine, dan tes diagnostik lainnya
+                                dengan hasil akurat.</p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Pemeriksaan darah lengkap</li>
+                                <li><i class="fas fa-check-circle"></i> Tes urine</li>
+                                <li><i class="fas fa-check-circle"></i> Tes gula darah</li>
+                                <li><i class="fas fa-check-circle"></i> Tes kolesterol</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/lab.jpeg" alt="Laboratorium" class="dept-img">
+                        </div>
+                    </div>
+                </div>
+                <div class="dept-panel" id="dept-apotek">
+                    <div class="row align-items-center g-4">
+                        <div class="col-lg-6">
+                            <h3>Apotek</h3>
+                            <p>Apotek lengkap dengan obat-obatan berkualitas. Pelayanan resep dokter dan obat bebas
+                                dengan harga terjangkau.</p>
+                            <ul class="dept-list">
+                                <li><i class="fas fa-check-circle"></i> Obat resep dokter</li>
+                                <li><i class="fas fa-check-circle"></i> Obat bebas</li>
+                                <li><i class="fas fa-check-circle"></i> Vitamin & suplemen</li>
+                                <li><i class="fas fa-check-circle"></i> Konsultasi obat</li>
+                            </ul>
+
+                        </div>
+                        <div class="col-lg-6"><img src="assets/images/apotek.jpeg" alt="Apotek" class="dept-img"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- DOCTORS -->
+    <section class="doctors-section" id="doctors">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">OUR DOCTORS</span>
+                <h2>Tim Dokter Profesional</h2>
+                <p>Didukung oleh tenaga medis berpengalaman dan berdedikasi tinggi</p>
+            </div>
+            <div class="row g-4" id="doctorsGrid">
+                <div class="col-lg-3 col-md-6">
+                    <div class="doctor-card-v2">
+                        <div class="doctor-photo"><img src="assets/images/d1.jpeg" alt="dr. Ahmad Fauzi">
+                            <div class="doctor-social"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                                        class="fab fa-instagram"></i></a><a href="#"><i
+                                        class="fab fa-linkedin-in"></i></a></div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4>dr. Ahmad Fauzi, Sp.PD</h4><span>Dokter Spesialis Penyakit Dalam</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="doctor-card-v2">
+                        <div class="doctor-photo"><img src="assets/images/d3.jpeg" alt="dr. Siti Aminah">
+                            <div class="doctor-social"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                                        class="fab fa-instagram"></i></a><a href="#"><i
+                                        class="fab fa-linkedin-in"></i></a></div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4>dr. Siti Aminah, Sp.GK</h4><span>Dokter Spesialis Gizi Klinik</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="doctor-card-v2">
+                        <div class="doctor-photo"><img src="assets/images/d2.jpeg" alt="dr. Budi Santoso">
+                            <div class="doctor-social"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                                        class="fab fa-instagram"></i></a><a href="#"><i
+                                        class="fab fa-linkedin-in"></i></a></div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4>dr. Budi Santoso, Sp.JP</h4><span>Dokter Spesialis Jantung</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <div class="doctor-card-v2">
+                        <div class="doctor-photo"><img src="assets/images/d4.jpeg" alt="dr. Maya Sari">
+                            <div class="doctor-social"><a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                                        class="fab fa-instagram"></i></a><a href="#"><i
+                                        class="fab fa-linkedin-in"></i></a></div>
+                        </div>
+                        <div class="doctor-info">
+                            <h4>dr. Maya Sari, Sp.KJ</h4><span>Dokter Spesialis Kejiwaan</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section class="gallery-section" id="gallery">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">OUR GALLERY</span>
+                <h2>Fasilitas Klinik UNESA</h2>
+                <p>Fasilitas modern untuk kenyamanan dan keamanan pasien</p>
+            </div>
+            <div class="gallery-grid">
+                <div class="gallery-item"><img src="assets/images/resepsionis.jpg" alt="Resepsionis"><div class="gallery-overlay"><span>Resepsionis</span></div></div>
+                <div class="gallery-item"><img src="assets/images/rtungguumum.jpg" alt="Ruang Tunggu"><div class="gallery-overlay"><span>Ruang Tunggu</span></div></div>
+                <div class="gallery-item"><img src="assets/images/rtunggubpjs.jpg" alt="Ruang Tunggu BPJS"><div class="gallery-overlay"><span>Ruang Tunggu BPJS</span></div></div>
+                <div class="gallery-item"><img src="assets/images/ruanggigi.jpg" alt="Ruang Gigi"><div class="gallery-overlay"><span>Ruang Periksa Gigi</span></div></div>
+                <div class="gallery-item"><img src="assets/images/ruangtulang.jpg" alt="Ruang Periksa"><div class="gallery-overlay"><span>Ruang Periksa</span></div></div>
+                <div class="gallery-item"><img src="assets/images/dapur.jpg" alt="Pantry"><div class="gallery-overlay"><span>Pantry</span></div></div>
+            </div>
+        </div>
+    </section>
+    <!-- PRICING -->
+    <section class="pricing-section" id="pricing">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">PRICING & PACKAGES</span>
+                <h2>Paket Layanan Kesehatan</h2>
+                <p>Pilihan paket layanan yang sesuai dengan kebutuhan Anda</p>
+            </div>
+            <div class="row g-4 justify-content-center">
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <h3>Basic</h3>
+                        <div class="pricing-amount"><span class="currency">Rp</span><span
+                                class="price">50.000</span><span class="period">/kunjungan</span></div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fas fa-check"></i> Konsultasi dokter umum</li>
+                            <li class="included"><i class="fas fa-check"></i> Pemeriksaan dasar</li>
+                            <li class="included"><i class="fas fa-check"></i> Resep obat</li>
+                            <li class="excluded"><i class="fas fa-times"></i> Pemeriksaan lab</li>
+                            <li class="excluded"><i class="fas fa-times"></i> Konsultasi spesialis</li>
+                        </ul>
+                        <a onclick="" class="btn-pricing">Pilih Paket</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card popular">
+                        <div class="popular-badge">Most Popular</div>
+                        <h3>Premium</h3>
+                        <div class="pricing-amount"><span class="currency">Rp</span><span
+                                class="price">150.000</span><span class="period">/bulan</span></div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fas fa-check"></i> Konsultasi dokter umum</li>
+                            <li class="included"><i class="fas fa-check"></i> Pemeriksaan lengkap</li>
+                            <li class="included"><i class="fas fa-check"></i> Resep obat gratis</li>
+                            <li class="included"><i class="fas fa-check"></i> Pemeriksaan lab dasar</li>
+                            <li class="included"><i class="fas fa-check"></i> Konsultasi spesialis 2x</li>
+                        </ul>
+                        <a onclick="" class="btn-pricing">Pilih Paket</a>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="pricing-card">
+                        <h3>Family</h3>
+                        <div class="pricing-amount"><span class="currency">Rp</span><span
+                                class="price">350.000</span><span class="period">/bulan</span></div>
+                        <ul class="pricing-features">
+                            <li class="included"><i class="fas fa-check"></i> 4 anggota keluarga</li>
+                            <li class="included"><i class="fas fa-check"></i> Konsultasi dokter umum</li>
+                            <li class="included"><i class="fas fa-check"></i> Pemeriksaan lengkap</li>
+                            <li class="included"><i class="fas fa-check"></i> Lab lengkap</li>
+                            <li class="included"><i class="fas fa-check"></i> Konsultasi spesialis 4x</li>
+                        </ul>
+                        <a onclick="" class="btn-pricing">Pilih Paket</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- BLOG -->
+    <section class="blog-section" id="blog">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">HEALTH BLOG</span>
+                <h2>Artikel Kesehatan Terkini</h2>
+                <p>Informasi dan tips kesehatan dari para ahli</p>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-card">
+                        <div class="blog-img"><img src="assets/images/kesehatan.jpeg" alt="Tips Kesehatan"><span
+                                class="blog-tag">Kesehatan</span></div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><span><i class="fas fa-calendar"></i> 24 Apr 2024</span><span><i
+                                        class="fas fa-user"></i> Cakrawala University</span></div>
+                            <h4>Tips Menjaga Kesehatan Fisik Selama Kuliah</h4>
+                            <p>Kesibukan sebagai seorang mahasiswa membuat kita sering lupa akan pentingnya olahraga.
+                                Tanpa disadari...</p><a
+                                href="https://www.cakrawala.ac.id/berita/tips-menjaga-kesehatan-fisik-selama-kuliah"
+                                class="feature-link">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-card">
+                        <div class="blog-img"><img src="assets/images/nutrisi.jpeg" alt="Pola Makan"><span
+                                class="blog-tag" style="background:var(--success);">Nutrisi</span></div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><span><i class="fas fa-calendar"></i> 11 Jul 2025</span><span><i
+                                        class="fas fa-user"></i> A. Ardiansyah. N,S.Psi.,M.Kes.</span></div>
+                            <h4>Catat! 3 Kebiasaan Penting bagi Gen Z yang Membantu Tetap Sehat</h4>
+                            <p>In this economy, terdapat beragam faktor yang berpotensi memengaruhi kondisi kesehatan
+                                kita secara menyeluruh...</p><a href="https://share.google/Yyc23VL8kg95navuy"
+                                class="feature-link">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <div class="blog-card">
+                        <div class="blog-img"><img src="assets/images/mental.jpeg" alt="Kelola Stres"><span
+                                class="blog-tag" style="background:#E91E63;">Mental</span></div>
+                        <div class="blog-body">
+                            <div class="blog-meta"><span><i class="fas fa-calendar"></i>12 Jan 2024</span><span><i
+                                        class="fas fa-user"></i> ENKA</span></div>
+                            <h4>Krisis Kesehatan Mental Menghantui Gen-Z Indonesia</h4>
+                            <p>Sekitar 1 dari 20 atau 5,5 persen remaja usia 10-17 tahun didiagnosis memiliki gangguan
+                                mental...</p><a
+                                href="https://rsj.acehprov.go.id/berita/kategori/artikel/krisis-kesehatan-mental-menghantui-generasi-z-indonesia"
+                                class="feature-link">Read More <i class="fas fa-arrow-right"></i></a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT -->
+    <section class="contact-section" id="contact">
+        <div class="container">
+            <div class="section-header text-center">
+                <span class="subtitle">CONTACT US</span>
+                <h2>Hubungi Kami</h2>
+                <p>Silakan hubungi kami untuk informasi lebih lanjut</p>
+            </div>
+            <div class="row g-5">
+                <div class="col-lg-5">
+                    <div class="contact-info">
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
+                            <div class="contact-detail">
+                                <h4>Alamat</h4>
+                                <p>Kampus UNESA Ketintang, Surabaya, Jawa Timur 60231</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-phone-alt"></i></div>
+                            <div class="contact-detail">
+                                <h4>Telepon</h4>
+                                <p>(031) 1234567<br>0812-3456-7890 (WhatsApp)</p>
+                            </div>
+                        </div>
+                        <div class="contact-item">
+                            <div class="contact-icon"><i class="fas fa-envelope"></i></div>
+                            <div class="contact-detail">
+                                <h4>Email</h4>
+                                <p>klinik@unesa.ac.id<br>info@eklinik.unesa.ac.id</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-7">
+                    <div class="contact-form">
+                        <form id="contactForm">
+                            <div class="row g-3 mb-3">
+                                <div class="col-md-6"><input type="text" class="form-control" placeholder="Nama Lengkap"
+                                        required></div>
+                                <div class="col-md-6"><input type="email" class="form-control" placeholder="Email"
+                                        required></div>
+                            </div>
+                            <div class="mb-3"><input type="text" class="form-control" placeholder="Subject" required>
+                            </div>
+                            <div class="mb-3"><textarea class="form-control" rows="4" placeholder="Pesan"
+                                    required></textarea></div>
+                            <button type="submit" class="btn-submit"><i class="fas fa-paper-plane"></i> Kirim
+                                Pesan</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-5">
+                <div class="col-lg-4">
+                    <div class="footer-brand"><img src="assets/images/logo e-klinik.png" alt="E-Klinik"
+                            style="width:28px;height:28px;object-fit:contain;"><span>E-Klinik UNESA</span></div>
+                    <p>Sistem Informasi Manajemen Kesehatan Mahasiswa Universitas Negeri Surabaya. Melayani dengan hati,
+                        profesional dalam tindakan.</p>
+                    <div class="footer-social">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a><a href="#"><i
+                                class="fab fa-instagram"></i></a><a href="#"><i class="fab fa-twitter"></i></a><a
+                            href="#"><i class="fab fa-youtube"></i></a><a href="#"><i
+                                class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2">
+                    <h5>Quick Links</h5>
+                    <ul>
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#about">About Us</a></li>
+                        <li><a href="#department">Departments</a></li>
+                        <li><a href="#doctors">Doctors</a></li>
+                        <li><a href="#gallery">Gallery</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5>Our Services</h5>
+                    <ul>
+                        <li><a href="#">Poli Umum</a></li>
+                        <li><a href="#">Poli Gigi</a></li>
+                        <li><a href="#">Konsultasi Online</a></li>
+                        <li><a href="#">Kesehatan Mental</a></li>
+                        <li><a href="#">Laboratorium</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3">
+                    <h5>Newsletter</h5>
+                    <p>Dapatkan informasi kesehatan terbaru</p>
+                    <div class="newsletter-form"><input type="email" placeholder="Email address"><button><i
+                                class="fas fa-paper-plane"></i></button></div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p style="color:rgba(255,255,255,0.5);margin:0;">&copy; 2026 E-Klinik UNESA. All rights reserved.
+                    Developed by 2024D-5 Vokasi UNESA.</p>
+            </div>
+        </div>
+    </footer>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="js/app.js"></script>
+    <script type="module">
+        import { getDashboardStats } from './js/db.js';
+
+        async function updateMainStats() {
+            try {
+                const stats = await getDashboardStats();
+                document.getElementById('mainStatDoctors').textContent = stats.totalDoctors || 0;
+                document.getElementById('mainStatPatients').textContent = stats.totalPatients || 0;
+                document.getElementById('mainStatQueue').textContent = stats.queueTotal || 0;
+            } catch (e) {
+                console.error('Failed to update main stats:', e);
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', updateMainStats);
+    </script>
+    <script type="module" src="js/ai-agent.js"></script>
+
+    <script>
+        // Login check for protected pages
+        function goProtected(page) {
+            var session = sessionStorage.getItem('eklinik_session');
+            if (session) {
+                window.location.href = 'pages/' + page + '.html';
+            } else {
+                window.location.href = 'pages/login.html?redirect=' + page;
+            }
+            return false;
+        }
+        // Department tabs
+        document.querySelectorAll('.dept-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.dept-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.dept-panel').forEach(p => p.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('dept-' + tab.dataset.dept)?.classList.add('active');
+            });
+        });
+        // Contact form
+        document.getElementById('contactForm')?.addEventListener('submit', e => {
+            e.preventDefault(); alert('Terima kasih! Pesan Anda telah terkirim.'); e.target.reset();
+        });
+
+        // Mobile Navigation Drawer
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const mobileNavDrawer = document.getElementById('mobileNavDrawer');
+        const mobileNavOverlay = document.getElementById('mobileNavOverlay');
+        const mobileNavClose = document.getElementById('mobileNavClose');
+
+        function openMobileNav() {
+            mobileNavDrawer?.classList.add('open');
+            mobileNavOverlay?.classList.add('open');
+            document.body.style.overflow = 'hidden';
+        }
+        function closeMobileNav() {
+            mobileNavDrawer?.classList.remove('open');
+            mobileNavOverlay?.classList.remove('open');
+            document.body.style.overflow = '';
+        }
+
+        mobileMenuBtn?.addEventListener('click', openMobileNav);
+        mobileNavClose?.addEventListener('click', closeMobileNav);
+        mobileNavOverlay?.addEventListener('click', closeMobileNav);
+
+        // Close mobile nav when clicking a link
+        document.querySelectorAll('.mobile-nav-links a').forEach(link => {
+            link.addEventListener('click', closeMobileNav);
+        });
+    </script>
+</body>
+
+</html>

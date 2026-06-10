@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <!-- Sidebar (dynamic RBAC) -->
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="content-header">
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Dashboard</h1>
+                </div>
+                <div id="userInfoContainer"></div>
+            </div>
+
+            <div class="content-body">
+                <!-- Stats -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card">
+                        <div class="stat-icon teal"><i class="fas fa-user-md"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statDoctors">-</h3>
+                            <p>Total Dokter</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon blue"><i class="fas fa-users"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statPatients">-</h3>
+                            <p>Total Pasien</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon orange"><i class="fas fa-list-ol"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statQueue">-</h3>
+                            <p>Antrian Hari Ini</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon green"><i class="fas fa-check-circle"></i></div>
+                        <div class="stat-info">
+                            <h3 id="statCompleted">-</h3>
+                            <p>Selesai Hari Ini</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row g-4">
+                    <!-- Recent Queue -->
+                    <div class="col-lg-7">
+                        <div class="data-card">
+                            <div class="data-card-header">
+                                <h3><i class="fas fa-list-ol" style="color:var(--primary-color);margin-right:8px;"></i>
+                                    Antrian Hari Ini</h3>
+                                <a href="queue.html" class="btn btn-outline btn-sm">Lihat Semua</a>
+                            </div>
+                            <div class="data-card-body" id="recentQueue">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Patients -->
+                    <div class="col-lg-5">
+                        <div class="data-card">
+                            <div class="data-card-header">
+                                <h3><i class="fas fa-users" style="color:var(--secondary-color);margin-right:8px;"></i>
+                                    Pasien Terbaru</h3>
+                                <a href="patients.html" class="btn btn-outline btn-sm">Lihat Semua</a>
+                            </div>
+                            <div class="data-card-body" id="recentPatients">
+                                <div class="spinner"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="../js/dashboard.js"></script>
+    <script type="module" src="../js/ai-agent.js"></script>
+</body>
+
+</html>

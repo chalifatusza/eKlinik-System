@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pasien E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="main-content">
+            <div class="content-header">
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Kelola Pasien</h1>
+                </div>
+                <div id="userInfoContainer"></div>
+            </div>
+            <div class="content-body">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="search-input-wrapper" style="max-width:300px;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Cari pasien (nama/NIM)...">
+                        </div>
+                        <button class="btn btn-primary-solid" id="addPatientBtn"><i class="fas fa-plus"></i> Tambah
+                            Pasien</button>
+                    </div>
+                    <div class="data-card-body" id="patientsTable">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="fb-modal-overlay" id="patientModal">
+        <div class="fb-modal" style="max-width:640px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tambah Pasien</h3><button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="patientForm">
+                    <input type="hidden" id="patientId">
+                    <div class="form-row">
+                        <div class="form-group"><label>NIM</label><input type="text" class="form-input" id="patientNim"
+                                required></div>
+                        <div class="form-group"><label>Nama Lengkap</label><input type="text" class="form-input"
+                                id="patientName" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Jenis Kelamin</label><select class="form-input"
+                                id="patientGender">
+                                <option value="Laki-laki">Laki-laki</option>
+                                <option value="Perempuan">Perempuan</option>
+                            </select></div>
+                        <div class="form-group"><label>Tanggal Lahir</label><input type="date" class="form-input"
+                                id="patientDob"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Fakultas</label><input type="text" class="form-input"
+                                id="patientFaculty"></div>
+                        <div class="form-group"><label>Program Studi</label><input type="text" class="form-input"
+                                id="patientProgram"></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>No. Telepon</label><input type="text" class="form-input"
+                                id="patientPhone"></div>
+                        <div class="form-group"><label>Golongan Darah</label><select class="form-input"
+                                id="patientBlood">
+                                <option value="A">A</option>
+                                <option value="B">B</option>
+                                <option value="AB">AB</option>
+                                <option value="O">O</option>
+                            </select></div>
+                    </div>
+                    <div class="form-group"><label>Alamat</label><input type="text" class="form-input"
+                            id="patientAddress"></div>
+                    <div class="form-group"><label>Alergi</label><input type="text" class="form-input"
+                            id="patientAllergies" placeholder="Tidak ada"></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="modalCancel">Batal</button>
+                <button class="btn btn-primary-solid" id="modalSave">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { requireAuth, logout, renderUserInfo } from '../js/auth.js';
+        import { getAllPatients, createPatient, updatePatient, deletePatient } from '../js/db.js';
+        import { renderSidebar } from '../js/sidebar.js';
+
+        if (!requireAuth(['admin', 'dokter'])) { }
+        renderSidebar();
+        renderUserInfo('#userInfoContainer');
+
+        let patients = [];
+        const modal = document.getElementById('patientModal');
+        const openModal = () => modal.classList.add('active');
+        const closeModal = () => { modal.classList.remove('active'); document.getElementById('patientForm').reset(); document.getElementById('patientId').value = ''; };
+
+        document.getElementById('addPatientBtn').addEventListener('click', () => { document.getElementById('modalTitle').textContent = 'Tambah Pasien'; closeModal(); openModal(); });
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalCancel').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        document.getElementById('modalSave').addEventListener('click', async () => {
+            const id = document.getElementById('patientId').value;
+            const data = {
+                nim: document.getElementById('patientNim').value,
+                name: document.getElementById('patientName').value,
+                gender: document.getElementById('patientGender').value,
+                dateOfBirth: document.getElementById('patientDob').value,
+                faculty: document.getElementById('patientFaculty').value,
+                program: document.getElementById('patientProgram').value,
+                phone: document.getElementById('patientPhone').value,
+                bloodType: document.getElementById('patientBlood').value,
+                address: document.getElementById('patientAddress').value,
+                allergies: document.getElementById('patientAllergies').value || 'Tidak ada'
+            };
+            if (!data.nim || !data.name) return;
+            try {
+                if (id) { await updatePatient(id, data); showToast('Pasien diperbarui'); }
+                else { await createPatient(data); showToast('Pasien ditambahkan'); }
+                closeModal(); await loadPatients();
+            } catch (e) { showToast('Gagal menyimpan', 'error'); }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const kw = e.target.value.toLowerCase();
+            renderPatients(patients.filter(p => p.name.toLowerCase().includes(kw) || (p.nim || '').toLowerCase().includes(kw)));
+        });
+
+        async function loadPatients() {
+            try {
+                patients = await getAllPatients();
+                renderPatients(patients);
+            } catch (e) { document.getElementById('patientsTable').innerHTML = '<div class="fb-error">Gagal memuat data.</div>'; }
+        }
+
+        function renderPatients(list) {
+            const el = document.getElementById('patientsTable');
+            if (!list.length) { el.innerHTML = '<div class="fb-empty-state"><p>Tidak ada data pasien.</p></div>'; return; }
+            el.innerHTML = `<table class="data-table"><thead><tr><th>NIM</th><th>Nama</th><th>Fakultas</th><th>Gender</th><th>Telepon</th><th>Aksi</th></tr></thead><tbody>
+                ${list.map(p => `<tr>
+                    <td><code>${p.nim}</code></td><td><strong>${p.name}</strong></td><td>${p.faculty || '-'}</td>
+                    <td>${p.gender || '-'}</td><td>${p.phone || '-'}</td>
+                    <td>
+                        <button class="btn btn-ghost btn-sm" data-edit="${p.id}"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-ghost btn-sm" data-delete="${p.id}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`).join('')}</tbody></table>`;
+
+            el.querySelectorAll('[data-edit]').forEach(btn => btn.addEventListener('click', () => {
+                const p = patients.find(x => x.id === btn.dataset.edit); if (!p) return;
+                document.getElementById('modalTitle').textContent = 'Edit Pasien';
+                document.getElementById('patientId').value = p.id;
+                document.getElementById('patientNim').value = p.nim || '';
+                document.getElementById('patientName').value = p.name || '';
+                document.getElementById('patientGender').value = p.gender || 'Laki-laki';
+                document.getElementById('patientDob').value = p.dateOfBirth || '';
+                document.getElementById('patientFaculty').value = p.faculty || '';
+                document.getElementById('patientProgram').value = p.program || '';
+                document.getElementById('patientPhone').value = p.phone || '';
+                document.getElementById('patientBlood').value = p.bloodType || 'O';
+                document.getElementById('patientAddress').value = p.address || '';
+                document.getElementById('patientAllergies').value = p.allergies || '';
+                openModal();
+            }));
+            el.querySelectorAll('[data-delete]').forEach(btn => btn.addEventListener('click', async () => {
+                if (!confirm('Hapus pasien ini?')) return;
+                try { await deletePatient(btn.dataset.delete); showToast('Pasien dihapus'); await loadPatients(); }
+                catch (e) { showToast('Gagal menghapus', 'error'); }
+            }));
+        }
+
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div'); t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        loadPatients();
+    </script>
+    <script type="module" src="../js/ai-agent.js"></script>
+</body>
+
+</html>

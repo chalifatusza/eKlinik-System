@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dokter E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="main-content">
+            <div class="content-header">
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Kelola Dokter</h1>
+                </div>
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <div id="userInfoContainer"></div>
+                </div>
+            </div>
+            <div class="content-body">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="search-input-wrapper" style="max-width:300px;">
+                            <label for="searchInput" class="visually-hidden">Cari dokter</label>
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Cari dokter...">
+                        </div>
+                        <button class="btn btn-primary-solid" id="addDoctorBtn"><i class="fas fa-plus"></i> Tambah
+                            Dokter</button>
+                    </div>
+                    <div class="data-card-body">
+                        <div id="doctorsTable">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="fb-modal-overlay" id="doctorModal">
+        <div class="fb-modal">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tambah Dokter</h3>
+                <button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="doctorForm">
+                    <input type="hidden" id="doctorId">
+                    <div class="form-group"><label for="doctorName">Nama Lengkap</label><input type="text"
+                            class="form-input" id="doctorName" required></div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="doctorSpecialty">Spesialisasi</label><input type="text"
+                                class="form-input" id="doctorSpecialty" required></div>
+                        <div class="form-group"><label for="doctorInitials">Inisial</label><input type="text"
+                                class="form-input" id="doctorInitials" maxlength="3" required></div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label for="doctorQuota">Kuota Harian</label><input type="number"
+                                class="form-input" id="doctorQuota" value="20" required></div>
+                        <div class="form-group"><label for="doctorPhone">No. Telepon</label><input type="text"
+                                class="form-input" id="doctorPhone"></div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="modalCancel">Batal</button>
+                <button class="btn btn-primary-solid" id="modalSave">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { requireAuth, logout, renderUserInfo } from '../js/auth.js';
+        import { getAllDoctors, createDoctor, updateDoctor, deleteDoctor } from '../js/db.js';
+        import { renderSidebar } from '../js/sidebar.js';
+
+        if (!requireAuth(['admin'])) { /* blocked */ }
+
+        renderSidebar();
+        renderUserInfo('#userInfoContainer');
+
+        let doctors = [];
+        const modal = document.getElementById('doctorModal');
+        const openModal = () => modal.classList.add('active');
+        const closeModal = () => { modal.classList.remove('active'); document.getElementById('doctorForm').reset(); document.getElementById('doctorId').value = ''; };
+
+        document.getElementById('addDoctorBtn').addEventListener('click', () => { document.getElementById('modalTitle').textContent = 'Tambah Dokter'; closeModal(); openModal(); });
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalCancel').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        document.getElementById('modalSave').addEventListener('click', async () => {
+            const id = document.getElementById('doctorId').value;
+            const data = {
+                name: document.getElementById('doctorName').value.trim(),
+                specialty: document.getElementById('doctorSpecialty').value.trim(),
+                initials: document.getElementById('doctorInitials').value.trim(),
+                quota: parseInt(document.getElementById('doctorQuota').value) || 20,
+                phone: document.getElementById('doctorPhone').value.trim(),
+                status: 'active'
+            };
+
+            if (!data.name || !data.specialty || !data.initials) {
+                showToast('Mohon lengkasi semua field wajib', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('modalSave');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Menyimpan...';
+
+            try {
+                let success = false;
+                if (id) {
+                    success = await updateDoctor(id, data);
+                    if (success) showToast('Dokter berhasil diperbarui', 'success');
+                } else {
+                    const newId = await createDoctor(data);
+                    success = !!newId;
+                    if (success) showToast('Dokter berhasil ditambahkan', 'success');
+                }
+
+                if (success) {
+                    closeModal();
+                    await loadDoctors();
+                } else {
+                    showToast('Gagal menyimpan data ke database', 'error');
+                }
+            } catch (e) {
+                console.error(e);
+                showToast('Terjadi kesalahan sistem', 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Simpan';
+            }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const kw = e.target.value.toLowerCase();
+            renderDoctors(doctors.filter(d => d.name.toLowerCase().includes(kw) || (d.specialty || '').toLowerCase().includes(kw)));
+        });
+
+        async function loadDoctors() {
+            try {
+                doctors = await getAllDoctors();
+                renderDoctors(doctors);
+            } catch (e) { console.error(e); document.getElementById('doctorsTable').innerHTML = '<div class="fb-error">Gagal memuat data dokter.</div>'; }
+        }
+
+        function renderDoctors(list) {
+            const el = document.getElementById('doctorsTable');
+            if (list.length === 0) { el.innerHTML = '<div class="fb-empty-state"><p>Tidak ada data dokter.</p></div>'; return; }
+            el.innerHTML = `<table class="data-table"><thead><tr><th>Nama</th><th>Spesialisasi</th><th>Kuota</th><th>Status</th><th>Aksi</th></tr></thead><tbody>
+                ${list.map(d => `<tr>
+                    <td><strong>${d.name}</strong></td>
+                    <td>${d.specialty}</td>
+                    <td>${d.quota || '-'}</td>
+                    <td><span class="badge ${d.status === 'active' ? 'badge-success' : 'badge-danger'}">${d.status === 'active' ? 'Aktif' : 'Non-aktif'}</span></td>
+                    <td>
+                        <button class="btn btn-ghost btn-sm" data-edit="${d.id}"><i class="fas fa-edit"></i></button>
+                        <button class="btn btn-ghost btn-sm" data-delete="${d.id}" style="color:var(--danger);"><i class="fas fa-trash"></i></button>
+                    </td>
+                </tr>`).join('')}
+            </tbody></table>`;
+
+            el.querySelectorAll('[data-edit]').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const doc = doctors.find(d => d.id === btn.dataset.edit);
+                    if (!doc) return;
+                    document.getElementById('modalTitle').textContent = 'Edit Dokter';
+                    document.getElementById('doctorId').value = doc.id;
+                    document.getElementById('doctorName').value = doc.name;
+                    document.getElementById('doctorSpecialty').value = doc.specialty;
+                    document.getElementById('doctorInitials').value = doc.initials || '';
+                    document.getElementById('doctorQuota').value = doc.quota || 20;
+                    document.getElementById('doctorPhone').value = doc.phone || '';
+                    openModal();
+                });
+            });
+
+            el.querySelectorAll('[data-delete]').forEach(btn => {
+                btn.addEventListener('click', async () => {
+                    if (!confirm('Hapus dokter ini?')) return;
+                    try { await deleteDoctor(btn.dataset.delete); showToast('Dokter dihapus', 'success'); await loadDoctors(); }
+                    catch (e) { showToast('Gagal menghapus', 'error'); }
+                });
+            });
+        }
+
+        function showToast(msg, type = 'success') {
+            const c = document.getElementById('toastContainer');
+            const t = document.createElement('div');
+            t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span>`;
+            c.appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        loadDoctors();
+    </script>
+    <script type="module" src="../js/ai-agent.js"></script>
+</body>
+
+</html>

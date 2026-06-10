@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dashboard Mahasiswa - E-Klinik UNESA</title>
+<link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+<link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/admin.css">
+</head>
+<body>
+<div class="admin-layout">
+<aside class="sidebar" id="sidebar"></aside>
+<div class="main-content">
+<div class="content-header">
+<div style="display:flex;align-items:center;gap:var(--spacing-md);">
+<button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+<h1>Dashboard Mahasiswa</h1>
+</div>
+<div id="userInfoContainer"></div>
+</div>
+<div class="content-body">
+                <!-- Welcome Banner -->
+                <div class="welcome-banner" style="background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; padding: 32px; border-radius: var(--radius-lg); margin-bottom: var(--spacing-xl); position: relative; overflow: hidden; box-shadow: var(--shadow-lg);">
+                    <div style="position: relative; z-index: 1;">
+                        <h2 style="font-weight: 800; margin-bottom: 8px;">Selamat Datang, <span id="userNameDisplay">Mahasiswa</span>!</h2>
+                        <p style="opacity: 0.9; max-width: 500px;">Gunakan layanan E-Klinik UNESA untuk memantau kesehatan Anda, mendaftar antrian secara digital, atau berkonsultasi dengan dokter kami.</p>
+                    </div>
+                    <i class="fas fa-hand-holding-medical" style="position: absolute; right: -20px; bottom: -20px; font-size: 150px; opacity: 0.1; transform: rotate(-15deg);"></i>
+                </div>
+
+                <!-- Stats -->
+                <div class="stats-grid" id="statsGrid">
+                    <div class="stat-card"><div class="stat-icon teal"><i class="fas fa-ticket-alt"></i></div><div class="stat-info"><h3 id="statQueue">-</h3><p>Antrian Aktif</p></div></div>
+                    <div class="stat-card"><div class="stat-icon blue"><i class="fas fa-comments"></i></div><div class="stat-info"><h3 id="statConsult">-</h3><p>Konsultasi</p></div></div>
+                    <div class="stat-card"><div class="stat-icon orange"><i class="fas fa-calendar-check"></i></div><div class="stat-info"><h3 id="statAppointment">-</h3><p>Riwayat Kunjungan</p></div></div>
+                    <div class="stat-card"><div class="stat-icon green"><i class="fas fa-user-md"></i></div><div class="stat-info"><h3 id="statDoctors">-</h3><p>Dokter Tersedia</p></div></div>
+                </div>
+
+<div class="row g-4">
+<!-- My Queue -->
+<div class="col-lg-6">
+<div class="data-card">
+<div class="data-card-header"><h3><i class="fas fa-list-ol" style="color:var(--primary-color);margin-right:8px;"></i> Antrian Saya Hari Ini</h3></div>
+<div class="data-card-body" id="myQueueContainer">
+<div class="text-center py-4"><div class="spinner"></div></div>
+</div>
+</div>
+</div>
+<!-- Quick Actions -->
+<div class="col-lg-6">
+<div class="data-card">
+<div class="data-card-header"><h3><i class="fas fa-bolt" style="color:var(--accent-color);margin-right:8px;"></i> Aksi Cepat</h3></div>
+<div class="data-card-body">
+<div style="display:grid;gap:var(--spacing-md);">
+<a href="appointment.html" class="btn btn-primary-solid btn-lg" style="justify-content:center;"><i class="fas fa-calendar-plus"></i> Daftar Antrian Baru</a>
+<a href="consultation.html" class="btn btn-outline btn-lg" style="justify-content:center;"><i class="fas fa-comments"></i> Mulai Konsultasi Online</a>
+</div>
+<div style="margin-top:var(--spacing-xl);">
+<h4 style="margin-bottom:var(--spacing-md);font-size:var(--font-size-base);">Info Jam Operasional</h4>
+<div style="background:var(--gray-50);border-radius:var(--radius-md);padding:var(--spacing-md);font-size:var(--font-size-sm);">
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--gray-200);"><span>Senin - Jumat</span><span style="color:var(--primary-color);font-weight:600;">08:00 - 20:00</span></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--gray-200);"><span>Sabtu</span><span style="color:var(--primary-color);font-weight:600;">08:00 - 15:00</span></div>
+<div style="display:flex;justify-content:space-between;padding:6px 0;"><span>Minggu</span><span style="color:var(--danger);font-weight:600;">Tutup</span></div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script type="module">
+import { requireAuth, getCurrentUser, logout, renderUserInfo } from '../js/auth.js';
+import { getAllDoctors, getConsultationsByUser, onPatientQueueUpdate, onQueueUpdate } from '../js/db.js';
+import { renderSidebar } from '../js/sidebar.js';
+
+if (!requireAuth(['mahasiswa'])) { /* redirects */ }
+
+renderSidebar();
+const user = getCurrentUser();
+document.getElementById('userNameDisplay').textContent = user?.name || 'Mahasiswa';
+renderUserInfo('#userInfoContainer');
+
+// Load static data once
+async function loadStaticData() {
+  try {
+    const [doctors, consultations] = await Promise.all([
+      getAllDoctors(),
+      getConsultationsByUser(user?.nim || '')
+    ]);
+    document.getElementById('statDoctors').textContent = doctors.length;
+    document.getElementById('statConsult').textContent = consultations.length;
+  } catch (e) {
+    console.error('Static data error:', e);
+  }
+}
+
+// Real-time listener for student's own queue
+function setupRealtimeMyQueue() {
+  const nim = user?.nim || '';
+  if (!nim) return;
+
+  onPatientQueueUpdate(nim, (myQueue) => {
+    const container = document.getElementById('myQueueContainer');
+    const activeQueue = myQueue.filter(q => q.status !== 'selesai');
+
+    // Update stat cards in real-time
+    document.getElementById('statQueue').textContent = activeQueue.length;
+    document.getElementById('statAppointment').textContent = myQueue.length;
+
+    if (activeQueue.length === 0) {
+      container.innerHTML = `
+        <div class="fb-empty-state">
+          <i class="fas fa-check-circle" style="font-size:36px;color:var(--success);display:block;margin-bottom:12px;"></i>
+          <p>Tidak ada antrian aktif</p>
+          <a href="appointment.html" class="btn btn-primary-solid" style="margin-top:12px;">
+            <i class="fas fa-plus"></i> Daftar Sekarang
+          </a>
+        </div>`;
+    } else {
+      container.innerHTML = activeQueue.map(q => `
+        <div style="display:flex;align-items:center;justify-content:space-between;padding:var(--spacing-md);background:var(--gray-50);border-radius:var(--radius-md);margin-bottom:var(--spacing-sm);transition:all 0.3s;">
+          <div>
+            <div style="font-size:var(--font-size-2xl);font-weight:800;color:var(--primary-color);">${q.queueNumber || '-'}</div>
+            <div style="font-size:var(--font-size-sm);color:var(--text-muted);">${q.doctorName || 'Dokter'}</div>
+          </div>
+          <div style="text-align:right;">
+            <span class="badge ${q.status === 'menunggu' ? 'badge-warning' : q.status === 'dipanggil' ? 'badge-info' : 'badge-success'}">
+              ${q.status === 'menunggu' ? '⏳ Menunggu' : q.status === 'dipanggil' ? '🔔 Dipanggil!' : '✅ Selesai'}
+            </span>
+            ${q.status === 'dipanggil' ? '<div style="font-size:11px;color:var(--info);margin-top:4px;font-weight:600;animation:pulse 1.5s infinite;">Silakan ke ruang periksa</div>' : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+  });
+}
+
+// Start everything
+loadStaticData();
+setupRealtimeMyQueue();
+</script>
+</body>
+</html>

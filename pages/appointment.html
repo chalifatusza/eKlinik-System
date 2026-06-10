@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Periksa â€” E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+        <div class="main-content">
+            <div class="content-header">
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Pendaftaran Periksa Online</h1>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <span id="userDisplay" style="font-size:var(--font-size-sm);"></span>
+                    <div id="userInfoContainer"></div>
+                </div>
+            </div>
+            <div class="content-body">
+                <p style="color:var(--text-muted);margin-bottom:var(--spacing-xl);">Pilih dokter dan jadwal yang
+                    tersedia untuk mendaftar antrian</p>
+                <!-- Step 1: Select Doctor -->
+                <div id="step1">
+                    <h3 style="margin-bottom:var(--spacing-lg);"><i class="fas fa-user-md"
+                            style="color:var(--primary-color);"></i> Pilih Dokter</h3>
+                    <div class="doctor-select-grid" id="doctorGrid">
+                        <div class="text-center" style="grid-column:1/-1;">
+                            <div class="spinner"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 2: Confirm -->
+                <div id="step2" style="display:none;">
+                    <div class="data-card" style="max-width:560px;margin:0 auto;">
+                        <div class="data-card-header">
+                            <h3><i class="fas fa-calendar-check"
+                                    style="color:var(--primary-color);margin-right:8px;"></i> Konfirmasi Pendaftaran
+                            </h3>
+                        </div>
+                        <div class="data-card-body">
+                            <div id="confirmDetails"></div>
+                            <div class="form-group" style="margin-top:var(--spacing-lg);">
+                                <label>Keluhan / Alasan Periksa</label>
+                                <textarea class="form-input" id="complaintInput" rows="3"
+                                    placeholder="Jelaskan keluhan Anda..." required></textarea>
+                            </div>
+                            <div style="display:flex;gap:var(--spacing-md);margin-top:var(--spacing-lg);">
+                                <button class="btn btn-outline" id="backBtn" style="flex:1;justify-content:center;"><i
+                                        class="fas fa-arrow-left"></i> Kembali</button>
+                                <button class="btn btn-primary-solid btn-lg" id="submitBtn"
+                                    style="flex:2;justify-content:center;"><i class="fas fa-check"></i> Daftar
+                                    Antrian</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div id="step3" style="display:none;">
+                    <div class="data-card" style="max-width:480px;margin:0 auto;text-align:center;">
+                        <div class="data-card-body" style="padding:var(--spacing-2xl);">
+                            <div
+                                style="width:80px;height:80px;background:rgba(39,174,96,0.15);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto var(--spacing-lg);">
+                                <i class="fas fa-check" style="font-size:36px;color:var(--success);"></i>
+                            </div>
+                            <h2 style="color:var(--success);">Pendaftaran Berhasil!</h2>
+                            <p style="color:var(--text-muted);margin-bottom:var(--spacing-lg);">Anda telah terdaftar
+                                dalam antrian</p>
+                            <div id="queueResult"
+                                style="background:var(--gray-50);border-radius:var(--radius-md);padding:var(--spacing-xl);margin-bottom:var(--spacing-xl);">
+                            </div>
+                            <button class="btn btn-primary-solid btn-lg" onclick="location.reload()"
+                                style="width:100%;justify-content:center;">
+                                <i class="fas fa-redo"></i> Daftar Lagi
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toast-container" id="toastContainer"></div>
+            <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+            <script type="module">
+                import { requireAuth, getCurrentUser, logout, renderUserInfo } from '../js/auth.js';
+                import { getAllDoctors, addToQueue, getPatientByNim, onQueueUpdate } from '../js/db.js';
+                import { renderSidebar } from '../js/sidebar.js';
+
+                if (!requireAuth(['admin', 'dokter', 'mahasiswa'])) { }
+
+                renderSidebar();
+                const user = getCurrentUser();
+                renderUserInfo('#userInfoContainer');
+
+                let selectedDoctor = null;
+                let patientData = null;
+                const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+                const todayDay = days[new Date().getDay()];
+
+                async function init() {
+                    const grid = document.getElementById('doctorGrid');
+                    try {
+                        // Get patient record
+                        if (user?.nim) patientData = await getPatientByNim(user.nim);
+
+                        // Load doctors with 10s timeout
+                        const doctorPromise = getAllDoctors();
+                        const timeoutPromise = new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 10000));
+                        const doctors = await Promise.race([doctorPromise, timeoutPromise]);
+
+                        if (!doctors || !doctors.length) {
+                            grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;"><i class="fas fa-user-md" style="font-size:48px;color:var(--text-light);display:block;margin-bottom:16px;"></i><p>Belum ada dokter yang tersedia saat ini.</p><button onclick="location.reload()" class="btn btn-primary-solid" style="margin-top:12px;"><i class="fas fa-redo"></i> Coba Lagi</button></div>';
+                            return;
+                        }
+
+                        grid.innerHTML = doctors.map(doc => {
+                            const schedule = doc.schedule || {};
+                            const todaySlots = schedule[todayDay] || [];
+                            const available = todaySlots.length > 0;
+
+                            return `
+                    <div class="doctor-select-card ${available ? '' : 'fb-loading'}" data-id="${doc.id}" ${available ? '' : 'style="pointer-events:none;opacity:0.5;"'}>
+                        <div class="doctor-initials">${doc.initials || doc.name.charAt(0)}</div>
+                        <h4 style="margin-bottom:4px;">${doc.name}</h4>
+                        <span style="color:var(--text-muted);font-size:var(--font-size-sm);display:block;margin-bottom:8px;">${doc.specialty}</span>
+                        ${available
+                                    ? `<span class="badge badge-success">Tersedia hari ini</span><br><small style="color:var(--text-muted);">Jam: ${todaySlots.join(', ')}</small>`
+                                    : `<span class="badge badge-danger">Tidak tersedia hari ini</span>`
+                                }
+                    </div>
+                `;
+                        }).join('');
+
+                        grid.querySelectorAll('.doctor-select-card[data-id]').forEach(card => {
+                            card.addEventListener('click', () => {
+                                if (card.style.pointerEvents === 'none') return;
+                                document.querySelectorAll('.doctor-select-card').forEach(c => c.classList.remove('selected'));
+                                card.classList.add('selected');
+                                selectedDoctor = doctors.find(d => d.id === card.dataset.id);
+                                showStep2();
+                            });
+                        });
+                    } catch (error) {
+                        console.error('Error loading doctors:', error);
+                        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;"><i class="fas fa-exclamation-triangle" style="font-size:48px;color:var(--warning);display:block;margin-bottom:16px;"></i><p>Gagal memuat data dokter. Pastikan koneksi internet Anda stabil.</p><button onclick="location.reload()" class="btn btn-primary-solid" style="margin-top:12px;"><i class="fas fa-redo"></i> Coba Lagi</button></div>';
+                    }
+                }
+
+                function showStep2() {
+                    if (!selectedDoctor) return;
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'block';
+
+                    const schedule = selectedDoctor.schedule || {};
+                    const slots = schedule[todayDay] || [];
+
+                    document.getElementById('confirmDetails').innerHTML = `
+                <div style="display:flex;align-items:center;gap:var(--spacing-lg);margin-bottom:var(--spacing-lg);">
+                    <div class="doctor-initials" style="width:56px;height:56px;font-size:var(--font-size-lg);">${selectedDoctor.initials || selectedDoctor.name.charAt(0)}</div>
+                    <div>
+                        <h4 style="margin:0;">${selectedDoctor.name}</h4>
+                        <span style="color:var(--text-muted);">${selectedDoctor.specialty}</span>
+                    </div>
+                </div>
+                <div style="background:var(--gray-50);padding:var(--spacing-md);border-radius:var(--radius-md);font-size:var(--font-size-sm);">
+                    <p style="margin:0 0 4px;"><strong>Hari:</strong> ${todayDay}, ${new Date().toLocaleDateString('id-ID')}</p>
+                    <p style="margin:0 0 4px;"><strong>Jam Tersedia:</strong> ${slots.join(', ')}</p>
+                    <p style="margin:0;"><strong>Pasien:</strong> ${user?.name || '-'} (${user?.nim || '-'})</p>
+                </div>
+            `;
+                }
+
+                document.getElementById('backBtn').addEventListener('click', () => {
+                    document.getElementById('step2').style.display = 'none';
+                    document.getElementById('step1').style.display = 'block';
+                });
+
+                document.getElementById('submitBtn').addEventListener('click', async () => {
+                    const complaint = document.getElementById('complaintInput').value.trim();
+                    if (!complaint) { alert('Silakan isi keluhan Anda.'); return; }
+                    if (!selectedDoctor) return;
+
+                    const btn = document.getElementById('submitBtn');
+                    btn.disabled = true;
+                    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Mendaftar...';
+
+                    try {
+                        const result = await addToQueue({
+                            doctorId: selectedDoctor.id,
+                            doctorName: selectedDoctor.name,
+                            patientId: patientData?.id || '',
+                            patientName: user?.name || '',
+                            patientNim: user?.nim || '',
+                            complaint: complaint,
+                            specialty: selectedDoctor.specialty
+                        });
+
+                        if (result) {
+                            document.getElementById('step2').style.display = 'none';
+                            document.getElementById('step3').style.display = 'block';
+                            document.getElementById('queueResult').innerHTML = `
+                        <div style="font-size:var(--font-size-5xl);font-weight:var(--font-extrabold);color:var(--primary-color);margin-bottom:var(--spacing-sm);">${result.queueNumber}</div>
+                        <p style="margin:0;color:var(--text-muted);">Nomor antrian Anda â€” ${selectedDoctor.name}</p>
+                    `;
+                        } else {
+                            alert('Gagal mendaftar. Silakan coba lagi.');
+                        }
+                    } catch (e) {
+                        console.error(e);
+                        alert('Terjadi kesalahan.');
+                    } finally {
+                        btn.disabled = false;
+                        btn.innerHTML = '<i class="fas fa-check"></i> Daftar Antrian';
+                    }
+                });
+
+                init();
+
+                // Real-time queue count per doctor
+                onQueueUpdate((queue) => {
+                    document.querySelectorAll('.doctor-select-card[data-id]').forEach(card => {
+                        const docId = card.dataset.id;
+                        const docQueue = queue.filter(q => q.doctorId === docId);
+                        const waiting = docQueue.filter(q => q.status === 'menunggu').length;
+                        let countEl = card.querySelector('.live-queue-count');
+                        if (!countEl) {
+                            countEl = document.createElement('div');
+                            countEl.className = 'live-queue-count';
+                            countEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);';
+                            card.appendChild(countEl);
+                        }
+                        countEl.innerHTML = waiting > 0
+                            ? `<i class="fas fa-users" style="color:var(--warning);"></i> <strong>${waiting}</strong> orang menunggu`
+                            : `<i class="fas fa-check-circle" style="color:var(--success);"></i> Belum ada antrian`;
+                    });
+                });
+            </script>
+        </div>
+    </div>
+    </div>
+</body>
+
+</html>

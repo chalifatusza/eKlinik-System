@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rekam Medis E-Klinik UNESA</title>
+    <link rel="icon" type="image/png" href="../assets/images/logo e-klinik.png">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/admin.css">
+</head>
+
+<body>
+    <div class="admin-layout">
+        <aside class="sidebar" id="sidebar"></aside>
+
+        <div class="main-content">
+            <div class="content-header">
+                <div style="display:flex;align-items:center;gap:var(--spacing-md);">
+                    <button class="menu-toggle" id="menuToggle"><i class="fas fa-bars"></i></button>
+                    <h1>Rekam Medis</h1>
+                </div>
+                <div id="userInfoContainer"></div>
+            </div>
+            <div class="content-body">
+                <div class="data-card">
+                    <div class="data-card-header">
+                        <div class="search-input-wrapper" style="max-width:300px;">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="searchInput" placeholder="Cari berdasarkan nama pasien...">
+                        </div>
+                        <button class="btn btn-primary-solid" id="addVisitBtn"><i class="fas fa-plus"></i> Tambah
+                            Kunjungan</button>
+                    </div>
+                    <div class="data-card-body" id="visitsTable">
+                        <div class="spinner"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="fb-modal-overlay" id="visitModal">
+        <div class="fb-modal" style="max-width:640px;">
+            <div class="modal-header">
+                <h3 id="modalTitle">Tambah Kunjungan</h3><button class="modal-close" id="modalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="visitForm">
+                    <input type="hidden" id="visitId">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label>Pasien</label>
+                            <select class="form-input" id="visitPatient" required>
+                                <option value="">Pilih Pasien</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Dokter</label>
+                            <select class="form-input" id="visitDoctor" required>
+                                <option value="">Pilih Dokter</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-row">
+                        <div class="form-group"><label>Tanggal Kunjungan</label><input type="date" class="form-input"
+                                id="visitDate" required></div>
+                        <div class="form-group">
+                            <label>Jenis Pemeriksaan</label>
+                            <select class="form-input" id="visitType">
+                                <option value="Umum">Pemeriksaan Umum</option>
+                                <option value="Gigi">Perawatan Gigi</option>
+                                <option value="Mata">Pemeriksaan Mata</option>
+                                <option value="Konseling">Konseling</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>Keluhan</label><textarea class="form-input" id="visitComplaint"
+                            rows="2" required></textarea></div>
+                    <div class="form-group"><label>Diagnosis</label><textarea class="form-input" id="visitDiagnosis"
+                            rows="2"></textarea></div>
+                    <div class="form-group"><label>Tindakan / Resep</label><textarea class="form-input"
+                            id="visitTreatment" rows="2"></textarea></div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="modalCancel">Batal</button>
+                <button class="btn btn-primary-solid" id="modalSave">Simpan</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module">
+        import { requireAuth, logout, renderUserInfo } from '../js/auth.js';
+        import { getAllVisits, createVisit, updateVisit, getAllPatients, getAllDoctors } from '../js/db.js';
+        import { renderSidebar } from '../js/sidebar.js';
+
+        if (!requireAuth(['admin', 'dokter'])) { }
+        renderSidebar();
+        renderUserInfo('#userInfoContainer');
+
+        let visits = [], patients = [], doctors = [];
+        const modal = document.getElementById('visitModal');
+        const openModal = () => modal.classList.add('active');
+        const closeModal = () => { modal.classList.remove('active'); document.getElementById('visitForm').reset(); document.getElementById('visitId').value = ''; };
+
+        document.getElementById('addVisitBtn').addEventListener('click', () => {
+            document.getElementById('modalTitle').textContent = 'Tambah Kunjungan';
+            document.getElementById('visitDate').value = new Date().toISOString().split('T')[0];
+            closeModal(); openModal();
+        });
+        document.getElementById('modalClose').addEventListener('click', closeModal);
+        document.getElementById('modalCancel').addEventListener('click', closeModal);
+        modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+
+        document.getElementById('modalSave').addEventListener('click', async () => {
+            const id = document.getElementById('visitId').value;
+            const patientId = document.getElementById('visitPatient').value;
+            const doctorId = document.getElementById('visitDoctor').value;
+            const patient = patients.find(p => p.id === patientId);
+            const doctor = doctors.find(d => d.id === doctorId);
+            const data = {
+                patientId, doctorId,
+                patientName: patient?.name || '', patientNim: patient?.nim || '',
+                doctorName: doctor?.name || '',
+                visitDate: document.getElementById('visitDate').value,
+                type: document.getElementById('visitType').value,
+                complaint: document.getElementById('visitComplaint').value,
+                diagnosis: document.getElementById('visitDiagnosis').value,
+                treatment: document.getElementById('visitTreatment').value,
+                status: 'selesai'
+            };
+            if (!data.patientId || !data.doctorId || !data.complaint) return;
+            try {
+                if (id) { await updateVisit(id, data); showToast('Rekam medis diperbarui'); }
+                else { await createVisit(data); showToast('Rekam medis ditambahkan'); }
+                closeModal(); await loadVisits();
+            } catch (e) { showToast('Gagal menyimpan', 'error'); }
+        });
+
+        document.getElementById('searchInput').addEventListener('input', (e) => {
+            const kw = e.target.value.toLowerCase();
+            renderVisits(visits.filter(v => (v.patientName || '').toLowerCase().includes(kw) || (v.doctorName || '').toLowerCase().includes(kw)));
+        });
+
+        async function loadVisits() {
+            try {
+                [visits, patients, doctors] = await Promise.all([getAllVisits(), getAllPatients(), getAllDoctors()]);
+                // Populate selects
+                const pSel = document.getElementById('visitPatient');
+                const dSel = document.getElementById('visitDoctor');
+                pSel.innerHTML = '<option value="">Pilih Pasien</option>' + patients.map(p => `<option value="${p.id}">${p.name} (${p.nim})</option>`).join('');
+                dSel.innerHTML = '<option value="">Pilih Dokter</option>' + doctors.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+                renderVisits(visits);
+            } catch (e) { document.getElementById('visitsTable').innerHTML = '<div class="fb-error">Gagal memuat data.</div>'; }
+        }
+
+        function renderVisits(list) {
+            const el = document.getElementById('visitsTable');
+            if (!list.length) { el.innerHTML = '<div class="fb-empty-state"><i class="fas fa-file-medical" style="font-size:40px;display:block;margin-bottom:12px;"></i><p>Belum ada rekam medis.</p></div>'; return; }
+            el.innerHTML = `<table class="data-table"><thead><tr><th>Tanggal</th><th>Pasien</th><th>Dokter</th><th>Jenis</th><th>Keluhan</th><th>Diagnosis</th></tr></thead><tbody>
+                ${list.map(v => `<tr>
+                    <td>${v.visitDate || '-'}</td><td><strong>${v.patientName || '-'}</strong></td>
+                    <td>${v.doctorName || '-'}</td><td><span class="badge badge-primary">${v.type || '-'}</span></td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.complaint || '-'}</td>
+                    <td style="max-width:200px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${v.diagnosis || '-'}</td>
+                </tr>`).join('')}</tbody></table>`;
+        }
+
+        function showToast(msg, type = 'success') {
+            const t = document.createElement('div'); t.className = `toast ${type}`;
+            t.innerHTML = `<i class="fas fa-${type === 'success' ? 'check-circle' : 'exclamation-circle'}"></i><span>${msg}</span>`;
+            document.getElementById('toastContainer').appendChild(t);
+            setTimeout(() => t.remove(), 3000);
+        }
+
+        loadVisits();
+    </script>
+    <script type="module" src="../js/ai-agent.js"></script>
+</body>
+
+</html>
