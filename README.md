@@ -23,7 +23,8 @@ yang membantu proses pendaftaran, triase gejala awal, notifikasi antrian, dan an
 
 -  **Data & konten belum merepresentasikan kondisi nyata.** Data dokter, jadwal, maupun informasi lain yang ditampilkan dalam sistem ini **belum tentu sesuai dengan kondisi nyata di E-Klinik UNESA**. Termasuk foto-foto dokter yang ditampilkan **bukan foto asli**, melainkan diambil dari internet hanya sebagai placeholder/dummy untuk kebutuhan demo aplikasi.
 
-   **Belum mendapat persetujuan resmi dari pihak terkait.** Proyek ini **belum melalui proses persetujuan, validasi, maupun kerja sama resmi dengan pihak E-Klinik UNESA** atau instansi terkait lainnya. Sistem ini murni dibuat untuk keperluan pembelajaran dan tugas akademik, **bukan** merupakan sistem resmi yang digunakan atau disahkan oleh UNESA.
+-   **Belum mendapat persetujuan resmi dari pihak terkait.** Proyek ini **belum melalui proses persetujuan, validasi, maupun kerja sama resmi dengan pihak E-Klinik UNESA** atau instansi terkait lainnya. Sistem ini murni dibuat untuk keperluan pembelajaran dan tugas akademik, **bukan** merupakan sistem resmi yang digunakan atau disahkan oleh UNESA.
+-    **Tampilan optimal pada zoom browser 90%.** Beberapa elemen antarmuka (layout, sidebar, ataupun komponen tertentu) belum sepenuhnya responsif di seluruh level zoom. Tampilan akan terlihat rapi dan sesuai desain jika browser (disarankan **Google Chrome**) di-*zoom* ke **90%**. Pada zoom **100%**, kemungkinan ada elemen yang bergeser atau tidak sejajar.
 
 **Kesimpulan:** Proyek ini adalah **prototipe/simulasi untuk keperluan akademik semata**, bukan produk final yang siap pakai atau merepresentasikan sistem resmi milik E-Klinik UNESA.
 
