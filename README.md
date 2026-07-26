@@ -5,7 +5,6 @@
 
 ![Status](https://img.shields.io/badge/status-active-brightgreen)
 ![Platform](https://img.shields.io/badge/platform-Web-blue)
-![License](https://img.shields.io/badge/license-MIT-yellow)
 ![Made with](https://img.shields.io/badge/made%20with-Firebase-FFCA28?logo=firebase&logoColor=black)
 
 
@@ -15,7 +14,7 @@ dengan alur login yang mendukung **SSO UNESA** (`@unesa.ac.id` / `@mhs.unesa.ac.
 yang membantu proses pendaftaran, triase gejala awal, notifikasi antrian, dan analitik statistik klinik secara otomatis.
 
 
-## ⭐ Fitur Utama
+## Fitur Utama
 
 - ✅ **Autentikasi & SSO UNESA** — login manual maupun simulasi SSO dengan validasi domain email kampus
 - ✅ **Role-Based Access Control** — akses berbeda untuk `admin`, `dokter`, dan `mahasiswa`
@@ -33,7 +32,7 @@ yang membantu proses pendaftaran, triase gejala awal, notifikasi antrian, dan an
 - ⭐ **Deploy Ready** — sudah dikonfigurasi untuk Firebase Hosting
 
 
-## 🛠️ Teknologi yang Digunakan
+## Teknologi yang Digunakan
 
 | Teknologi | Kegunaan |
 |---|---|
@@ -46,7 +45,6 @@ yang membantu proses pendaftaran, triase gejala awal, notifikasi antrian, dan an
 | **AI Agent System** | Chatbot multi-agent untuk pendaftaran, triase, notifikasi, dan analitik |
 | **SSO UNESA (Simulasi)** | Integrasi login dengan domain email kampus |
 
----
 
 ## 📂 Struktur Folder
 ```
@@ -116,12 +114,12 @@ firebase deploy
 ```
 
 > 🖥️ **Catatan:** Buka file `index.html` langsung dari file explorer **tidak disarankan**, karena browser akan memblokir `import` ES Module pada skema `file://`.
-
+> 🌐 **Catatan:** Aplikasi sudah live di Firebase Hosting — [https://eklinik-unesa.web.app/](https://eklinik-unesa.web.app/). Langkah instalasi di atas hanya diperlukan jika ingin menjalankan/mengembangkan secara lokal.
 ---
 
 ## 🖱️ Cara Menggunakan Aplikasi
 
-1. 👉 Buka halaman utama (`index.html`), lalu klik **Login** atau **Daftar Akun**.
+1. 👉 Buka aplikasi melalui [https://eklinik-unesa.web.app/](https://eklinik-unesa.web.app/) (atau `index.html` jika dijalankan secara lokal), lalu klik **Login** atau **Daftar Akun**.
 2. 👉 Login menggunakan email kampus UNESA (SSO) atau akun manual (NIM & password).
 3. 👉 Sistem otomatis mengarahkan ke dashboard sesuai peran:
    - 🎓 **Mahasiswa** → Dashboard Mahasiswa (daftar periksa, lihat antrian, konsultasi)
@@ -130,40 +128,27 @@ firebase deploy
 5. 👉 Pantau posisi antrian secara real-time melalui halaman **Antrian**.
 6. 👉 Manfaatkan **AI Assistant** untuk bertanya seputar pendaftaran, gejala kesehatan, atau status antrian.
 
----
 
 ## 🖼️ Screenshot
-
-
-| Halaman | Tampilan |
-|---|---|
-| Landing Page | `![Landing Page](assets/screenshots/landing.png)` |
-| Dashboard | `![Dashboard](assets/screenshots/dashboard.png)` |
-| Antrian | `![Antrian](assets/screenshots/queue.png)` |
+<img width="1366" height="6907" alt="ss lengkap eklinik" src="https://github.com/user-attachments/assets/1df1b7b2-9543-469b-b951-291fdcb40d65" />
 
 ---
 
-## 👥 Anggota Kelompok
+## ⚠️ Disclaimer
 
-| No | Nama | NIM |
-|---|---|---|
-| 1 | *Nama Anggota 1* | *NIM* 
-| 2 | *Nama Anggota 2* | *NIM* 
-| 3 | *Nama Anggota 3* | *NIM* 
+> Mohon dibaca sebelum menilai atau menggunakan proyek ini.
 
----
+- **Fokus tugas ini adalah menguji kemampuan agentic AI, bukan validitas sistem.** Proyek ini dibuat sebagai bagian dari tugas UAS untuk melihat sejauh mana mahasiswa mampu membangun sebuah Sistem Informasi Manajemen dengan memanfaatkan **agentic AI** — dalam kasus ini menggunakan **Antigravity**. Penilaian utama tugas ini bukan pada kesempurnaan sistem, melainkan pada proses pemanfaatan AI agentic dalam pengembangan software.
 
-## 📚 Dosen Pengampu
+-  **Masih banyak bug dan ketidaksesuaian.** Berdasarkan hasil pengujian perangkat lunak (menggunakan **Jam.dev**, **TestLink**, dan metode pengujian lainnya), sistem ini masih memiliki cukup banyak bug, error, serta ketidaksesuaian antara ekspektasi dan hasil aktual. Beberapa fitur mungkin belum berjalan sepenuhnya sesuai skenario pengujian.
 
-☕ **[Nama Dosen Pengampu]**
-Mata Kuliah: Sistem Informasi Manajemen (SIM)
-Program Studi D4 Manajemen Informatika — Fakultas Vokasi, Universitas Negeri Surabaya (UNESA)
+-  **Data & konten belum merepresentasikan kondisi nyata.** Data dokter, jadwal, maupun informasi lain yang ditampilkan dalam sistem ini **belum tentu sesuai dengan kondisi nyata di E-Klinik UNESA**. Termasuk foto-foto dokter yang ditampilkan **bukan foto asli**, melainkan diambil dari internet hanya sebagai placeholder/dummy untuk kebutuhan demo aplikasi.
 
----
+   **Belum mendapat persetujuan resmi dari pihak terkait.** Proyek ini **belum melalui proses persetujuan, validasi, maupun kerja sama resmi dengan pihak E-Klinik UNESA** atau instansi terkait lainnya. Sistem ini murni dibuat untuk keperluan pembelajaran dan tugas akademik, **bukan** merupakan sistem resmi yang digunakan atau disahkan oleh UNESA.
 
-## ⚖️ Lisensi
+**Kesimpulan:** Proyek ini adalah **prototipe/simulasi untuk keperluan akademik semata**, bukan produk final yang siap pakai atau merepresentasikan sistem resmi milik E-Klinik UNESA.
 
-Proyek ini dibuat untuk keperluan **akademik/tugas UAS** dan dilisensikan di bawah [MIT License](LICENSE).
+
 
 ---
 
